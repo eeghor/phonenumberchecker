@@ -1,11 +1,30 @@
 import pandas as pd
+from collections import defaultdict
 
 class PhoneNumberChecker:
     
     AUS_STATE_PREFIXES = {str(n) for n in range(1,9)}
-    MOB_ALLOCS = pd.read_csv('/Users/ik/Data/phone-numbers/InquiryFullDownload.csv', 
+
+    NUMB_ALLOCS = pd.read_csv('/Users/ik/Data/phone-numbers/InquiryFullDownload.csv', 
                              dtype={'Prefix': int, 'From': int, 'To': int}, 
                    usecols=["Service Type", "Prefix", "From", "To", "Latest Holder"]).loc[lambda _: _['Service Type'].isin({'Digital mobile', 'Local rate', 'Freephone'})]
+    """
+    create dictionaries of the sort {prefix1: [(from, to, holder), ..], prefix2: [(..), ..]}
+    e.g. {40: [(400000000, 400299999, 'TELSTRA CORPORATION LIMITED'),..],..}
+    """
+
+    MOB_ALLOCS_DICT = defaultdict(list)
+    for row in NUMB_ALLOCS[NUMB_ALLOCS['Service Type'] == 'Digital mobile'].iterrows():
+        MOB_ALLOCS_DICT[row[1].Prefix].append((row[1].From, row[1].To, row[1]["Latest Holder"]))
+    
+    LOCAL_ALLOCS_DICT = defaultdict(list)
+    for row in NUMB_ALLOCS[NUMB_ALLOCS['Service Type'] == 'Local rate'].iterrows():
+        LOCAL_ALLOCS_DICT[row[1].Prefix].append((row[1].From, row[1].To, row[1]["Latest Holder"]))
+
+    FREE_ALLOCS_DICT = defaultdict(list)
+    for row in NUMB_ALLOCS[NUMB_ALLOCS['Service Type'] == 'Freephone'].iterrows():
+        FREE_ALLOCS_DICT[row[1].Prefix].append((row[1].From, row[1].To, row[1]["Latest Holder"]))
+
     LNDL_PREFIXES = {a[1:] if a.startswith('0') else a for a in 
                      set(pd.read_csv('/Users/ik/Data/phone-numbers/landline_prefix_by_area.txt', dtype=str)['prefix'])}
     
@@ -71,17 +90,17 @@ class PhoneNumberChecker:
             return None
         # check mobile numbers (note: 9-digits)
         if ph[0] == '4':
-            prefix_ranges = PhoneNumberChecker.MOB_ALLOCS[PhoneNumberChecker.MOB_ALLOCS.Prefix == int(ph[:2])]
+            prefix_ranges = PhoneNumberChecker.NUMB_ALLOCS[PhoneNumberChecker.NUMB_ALLOCS.Prefix == int(ph[:2])]
             if prefix_ranges.empty:  # empty dataframe, no such prefixes
                 return None
             else:
                 for row in prefix_ranges.iterrows():
                     if row[1].From <= int(ph) <= row[1].To:
-                        holder = row[1]["Latest Holder"] if len(row[1]["Latest Holder"]) > 4 else 'UNKNOWN'
+                        holder = row[1]["Latest Holder"] if len(row[1]["Latest Holder"]) > 4 else 'unknown'
                         return (ph, PhoneNumberChecker.TELCO_DICT[holder.strip()])
         # check local rate numbers (6 digits)
         if ph[:2] == '13':
-            for row in PhoneNumberChecker.MOB_ALLOCS[PhoneNumberChecker.MOB_ALLOCS['Service Type'] == 'Local rate'].iterrows():
+            for row in PhoneNumberChecker.NUMB_ALLOCS[PhoneNumberChecker.NUMB_ALLOCS['Service Type'] == 'Local rate'].iterrows():
                 if ph.startswith(str(row[1].Prefix)):
                     if row[1].From <= int(ph) <= row[1].To:
                         if len(row[1]["Latest Holder"]) > 7:
@@ -89,7 +108,7 @@ class PhoneNumberChecker:
             return (ph, 'invalid')
         # check free numbers
         if ph[:2] == '18':
-            for row in PhoneNumberChecker.MOB_ALLOCS[PhoneNumberChecker.MOB_ALLOCS['Service Type'] == 'Freephone'].iterrows():
+            for row in PhoneNumberChecker.NUMB_ALLOCS[PhoneNumberChecker.NUMB_ALLOCS['Service Type'] == 'Freephone'].iterrows():
                 if ph.startswith(str(row[1].Prefix)):
                     if row[1].From <= int(ph) <= row[1].To:
                         if len(row[1]["Latest Holder"]) > 7:
@@ -107,3 +126,7 @@ class PhoneNumberChecker:
                     if (l + ph).startswith(pref):
                         return (ph, 'valid landline number')
             return (ph, 'invalid')
+
+if __name__ == '__main__':
+
+    pnc = PhoneNumberChecker()
