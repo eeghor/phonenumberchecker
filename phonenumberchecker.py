@@ -1,5 +1,6 @@
 import pandas as pd
 from collections import defaultdict
+import sys
 
 class PhoneNumberChecker:
     
@@ -9,42 +10,43 @@ class PhoneNumberChecker:
                              dtype={'Prefix': int, 'From': int, 'To': int}, 
                    usecols=["Service Type", "Prefix", "From", "To", "Latest Holder"]).loc[lambda _: _['Service Type'].isin({'Digital mobile', 'Local rate', 'Freephone'})]
     """
-    create dictionaries of the sort {prefix1: [(from, to, holder), ..], prefix2: [(..), ..]}
-    e.g. {40: [(400000000, 400299999, 'TELSTRA CORPORATION LIMITED'),..],..}
+    create dictionaries of the sort {service_type1: {prefix1: [(from, to, holder), ..], prefix2: [(..), ..]},...
+    e.g. {'mob': {40: [(400000000, 400299999, 'TELSTRA CORPORATION LIMITED'),..],..}
     """
 
-    MOB_ALLOCS_DICT = defaultdict(list)
-    for row in NUMB_ALLOCS[NUMB_ALLOCS['Service Type'] == 'Digital mobile'].iterrows():
-        MOB_ALLOCS_DICT[row[1].Prefix].append((row[1].From, row[1].To, row[1]["Latest Holder"]))
-    
-    LOCAL_ALLOCS_DICT = defaultdict(list)
-    for row in NUMB_ALLOCS[NUMB_ALLOCS['Service Type'] == 'Local rate'].iterrows():
-        LOCAL_ALLOCS_DICT[row[1].Prefix].append((row[1].From, row[1].To, row[1]["Latest Holder"]))
+    PREF2SERVICE = {'13': 'Local rate', '18': 'Freephone', '4': 'Digital mobile'}
+    PREF2ABBR = {'13': 'loc', '18': 'free', '4': 'mob'}
 
-    FREE_ALLOCS_DICT = defaultdict(list)
-    for row in NUMB_ALLOCS[NUMB_ALLOCS['Service Type'] == 'Freephone'].iterrows():
-        FREE_ALLOCS_DICT[row[1].Prefix].append((row[1].From, row[1].To, row[1]["Latest Holder"]))
+    ALLOCS_DICT = defaultdict(lambda: defaultdict(list))
+
+    for pref in PREF2SERVICE:
+        for row in NUMB_ALLOCS[NUMB_ALLOCS['Service Type'] == PREF2SERVICE[pref]].iterrows():
+            ALLOCS_DICT[PREF2ABBR[pref]][row[1].Prefix].append((row[1].From, row[1].To, 
+                ' '.join(str(row[1]["Latest Holder"]).lower().replace('pty', ' ')
+                                                    .replace('limited', ' ').split())))
 
     LNDL_PREFIXES = {a[1:] if a.startswith('0') else a for a in 
                      set(pd.read_csv('/Users/ik/Data/phone-numbers/landline_prefix_by_area.txt', dtype=str)['prefix'])}
     
-    TELCO_DICT = {'AUSTRALIAN COMMUNICATIONS AND MEDIA AUTHORITY': 'acma',
-                     'COMPATEL LIMITED': 'compatel',
-                     'DIALOGUE COMMUNICATIONS PTY LIMITED': 'dialogue',
-                     'LYCAMOBILE PTY LTD': 'lycamobile',
-                     'MESSAGEBIRD PTY LTD': 'messagebird',
-                     'OPTUS MOBILE PTY LIMITED': 'optus',
-                     'PIVOTEL SATELLITE PTY LIMITED': 'pivotel',
-                     'SOUL PATTINSON TELECOMMUNICATIONS PTY LIMITED': 'soul pattison',
-                     'SYDNEY TRAINS': 'sydney trains',
-                     'SYMBIO NETWORKS PTY LTD': 'symbio',
-                     'TELSTRA CORPORATION LIMITED': 'telstra',
-                     'VICTORIAN RAIL TRACK': 'victorian rail track',
-                     'VODAFONE AUSTRALIA PTY LIMITED': 'vodafone'}
-    
     def __init__(self):
         pass
     
+    @staticmethod
+    def verify_prefix(phone_number):
+        """
+        input: NORMALISED phone_number
+        returns: tuple ([NORMALISED PHONE NUMBER], [NUMBER HOLDER])
+        """
+        pref = phone_number[:2] if phone_number[0] != '4' else phone_number[0]
+
+        for match_pref in set(PhoneNumberChecker.ALLOCS_DICT[PhoneNumberChecker.PREF2ABBR[pref]]):
+            if  str(match_pref).startswith(phone_number[:2]):
+                for number_range in PhoneNumberChecker.ALLOCS_DICT[PhoneNumberChecker.PREF2ABBR[pref]][match_pref]:
+                    if number_range[0] <= int(phone_number) <= number_range[1]:
+                        return (phone_number, number_range[2])
+        return (phone_number, 'invalid')
+
+
     @staticmethod
     def verify(ph):  # 114 ms
         """
@@ -89,31 +91,34 @@ class PhoneNumberChecker:
         if len(ph) == 9 and ph[0] not in PhoneNumberChecker.AUS_STATE_PREFIXES:
             return None
         # check mobile numbers (note: 9-digits)
-        if ph[0] == '4':
-            prefix_ranges = PhoneNumberChecker.NUMB_ALLOCS[PhoneNumberChecker.NUMB_ALLOCS.Prefix == int(ph[:2])]
-            if prefix_ranges.empty:  # empty dataframe, no such prefixes
-                return None
-            else:
-                for row in prefix_ranges.iterrows():
-                    if row[1].From <= int(ph) <= row[1].To:
-                        holder = row[1]["Latest Holder"] if len(row[1]["Latest Holder"]) > 4 else 'unknown'
-                        return (ph, PhoneNumberChecker.TELCO_DICT[holder.strip()])
-        # check local rate numbers (6 digits)
-        if ph[:2] == '13':
-            for row in PhoneNumberChecker.NUMB_ALLOCS[PhoneNumberChecker.NUMB_ALLOCS['Service Type'] == 'Local rate'].iterrows():
-                if ph.startswith(str(row[1].Prefix)):
-                    if row[1].From <= int(ph) <= row[1].To:
-                        if len(row[1]["Latest Holder"]) > 7:
-                            return (ph, 'valid local rate')
-            return (ph, 'invalid')
-        # check free numbers
-        if ph[:2] == '18':
-            for row in PhoneNumberChecker.NUMB_ALLOCS[PhoneNumberChecker.NUMB_ALLOCS['Service Type'] == 'Freephone'].iterrows():
-                if ph.startswith(str(row[1].Prefix)):
-                    if row[1].From <= int(ph) <= row[1].To:
-                        if len(row[1]["Latest Holder"]) > 7:
-                            return (ph, 'valid free number')
-            return (ph, 'invalid')
+        return(PhoneNumberChecker.verify_prefix(ph))
+        sys.exit(0)
+
+        # if ph[0] == '4':
+        #     prefix_ranges = PhoneNumberChecker.NUMB_ALLOCS[PhoneNumberChecker.NUMB_ALLOCS.Prefix == int(ph[:2])]
+        #     if prefix_ranges.empty:  # empty dataframe, no such prefixes
+        #         return None
+        #     else:
+        #         for row in prefix_ranges.iterrows():
+        #             if row[1].From <= int(ph) <= row[1].To:
+        #                 holder = row[1]["Latest Holder"] if len(row[1]["Latest Holder"]) > 4 else 'unknown'
+        #                 return (ph, PhoneNumberChecker.TELCO_DICT[holder.strip()])
+        # # check local rate numbers (6 digits)
+        # if ph[:2] == '13':
+        #     for row in PhoneNumberChecker.NUMB_ALLOCS[PhoneNumberChecker.NUMB_ALLOCS['Service Type'] == 'Local rate'].iterrows():
+        #         if ph.startswith(str(row[1].Prefix)):
+        #             if row[1].From <= int(ph) <= row[1].To:
+        #                 if len(row[1]["Latest Holder"]) > 7:
+        #                     return (ph, 'valid local rate')
+        #     return (ph, 'invalid')
+        # # check free numbers
+        # if ph[:2] == '18':
+        #     for row in PhoneNumberChecker.NUMB_ALLOCS[PhoneNumberChecker.NUMB_ALLOCS['Service Type'] == 'Freephone'].iterrows():
+        #         if ph.startswith(str(row[1].Prefix)):
+        #             if row[1].From <= int(ph) <= row[1].To:
+        #                 if len(row[1]["Latest Holder"]) > 7:
+        #                     return (ph, 'valid free number')
+        #     return (ph, 'invalid')
         # deal with the 8- and 9-digit landlines
         if len(ph) == 9 and ph[0] != '4':
             for pref in PhoneNumberChecker.LNDL_PREFIXES:
@@ -130,3 +135,4 @@ class PhoneNumberChecker:
 if __name__ == '__main__':
 
     pnc = PhoneNumberChecker()
+    print(pnc.verify('0061475001329'))
