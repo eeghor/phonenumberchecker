@@ -1,6 +1,5 @@
 import pandas as pd
 from collections import defaultdict
-import sys
 
 class PhoneNumberChecker:
     
@@ -106,9 +105,13 @@ class PhoneNumberChecker:
 
 if __name__ == '__main__':
 
+    print(f'initializing phone checker...', end='')
     pnc = PhoneNumberChecker()
+    print('ok')
+
     print(pnc.verify('0061475001329'))
     print(pnc.verify('  934400221'))
     print(pnc.verify('1 33030'))
+    print(pnc.verify('$##04 .. 24103473'))
     print(pnc.verify('+ 614 78 001 873'))
     print(pnc.verify('42217002'))
