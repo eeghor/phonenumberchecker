@@ -1,0 +1,140 @@
+prefix,area
+0233,"Gosford, Central Coast"
+0237,"Armidale, Tamworth, Northern Tablelands"
+0238,"Bowral, Crookwell, Goulburn, Marulan"
+0239,"Griffith, Wagga Wagga, Riverina"
+0240,"Newcastle, Lower Hunter"
+0241,"Newcastle, Lower Hunter"
+0242,Wollongong
+0243,"Gosford, Central Coast"
+0244,"Batemans Bay, Moruya, Nowra"
+0245,"Windsor, Richmond"
+0246,Campbelltown
+0247,"Penrith, Blue Mountains"
+0248,"Bowral, Crookwell, Goulburn, Marulan"
+0249,"Newcastle, Lower Hunter"
+0250,"Albury, Corryong, Wodonga"
+0251,"Canberra, Queanbeyan, Yass"
+0252,"Canberra, Queanbeyan, Yass"
+0253,"Bathurst, Orange"
+0254,"Bega, Merimbula, Tathra, Cooma"
+0255,"Kempsey, Taree, Lord Howe Island, Muswellbrook"
+0256,"Murwillumbah, Grafton, Lismore"
+0257,"Armidale, Tamworth, Northern Tablelands"
+0258,"Bourke, Dubbo, Far West"
+0259,"Griffith, Wagga Wagga, Riverina"
+0260,"Albury, Corryong, Wodonga"
+0261,"Canberra, Queanbeyan, Yass"
+0262,"Canberra, Queanbeyan, Yass"
+0263,"Bathurst, Orange, Cowra"
+0264,"Bega, Merimbula, Tathra, Cooma"
+0265,"Port Macquarie, Kempsey, Taree, Lord Howe Island, Muswellbrook"
+0266,"Coffs Harbour, Grafton, Lismore"
+0267,"Armidale, Glen Innes, Gunnedah, Inverell, Moree, Narrabri, Tamworth"
+0268,"Bourke, Dubbo, Far West"
+0269,"Griffith, Wagga Wagga, Riverina"
+027,Sydney
+028,Sydney
+029,Sydney
+0332,"Geelong, Colac"
+0333,Ballarat
+0334,Bendigo
+0340,"Mildura, Balranald"
+0341,"Traralgon, Bairnsdale"
+0342,"Geelong, Colac"
+0343,Ballarat
+0344,Bendigo
+0345,Warrnambool
+0347,Wangaratta
+0348,"Deniliquin, Numurkah, Shepparton"
+0349,Mornington
+0350,"Mildura, Balranald"
+0351,"Traralgon, Bairnsdale"
+0352,"Colac, Geelong"
+0353,Ballarat
+0354,Bendigo
+0355,"Warrnambool, Casterton, Portland"
+0356,"Drouin, Foster, Warragul, Wonthaggi"
+0357,Wangaratta
+0358,"Deniliquin, Shepparton"
+0359,"Mornington, Pakenham, Rosebud, Warburton, Yarra Ranges"
+0361,Hobart
+0362,Hobart
+0363,Launceston
+0364,"Devonport, Burnie, Queenstown"
+0365,"Devonport, Burnie, Queenstown"
+0367,Launceston
+037,Melbourne
+038,Melbourne
+039,Melbourne
+072,"Brisbane, Bribie Island"
+073,"Brisbane, Bribie Island"
+0740,"Cairns, Far North Queensland"
+0741,"Bundaberg, Kingaroy"
+0742,Cairns
+0743,"Bundaberg, Kingaroy"
+0744,"Townsville, North Queensland"
+0745,"Toowoomba, Roma, south-west"
+0746,"Toowoomba, Roma, South West"
+0747,"Townsville, North Queensland"
+0748,"Rockhampton, Mackay"
+0749,"Rockhampton, Mackay, Gladstone"
+0752,"Sunshine Coast, Esk, Nambour, Gatton, Caboolture"
+0753,"Sunshine Coast, Esk, Nambour, Gatton, Caboolture"
+0754,"Sunshine Coast, Esk, Nambour, Gatton, Caboolture"
+0755,"Gold Coast, Beaudesert"
+0756,"Gold Coast, Beaudesert"
+0757,"Gold Coast, Beaudesert"
+0770,"Cairns, Far North Queensland"
+0775,"Inglewood, Toowoomba"
+0776,"Inglewood, Toowoomba"
+0777,"Townsville, North Queensland"
+0779,"Rockhampton, Mackay, Gladstone"
+0825,"Riverland, Murraylands"
+0826,Ceduna
+0851,Port Hedland
+0852,Perth
+0853,Perth
+0854,Perth
+0855,"Bullsbrook East, Northam, Pinjarra (Mandurah)"
+0858,Albany
+0860,"Kalgoorlie, Merredin, Goldfields-Esperance"
+0861,Perth
+0862,Perth
+0863,Perth
+0864,Perth
+0865,Perth
+0866,Moora
+0867,"Bridgetown, Bunbury"
+0868,Albany
+0869,Geraldton
+0870,Adelaide
+0871,Adelaide
+0872,Adelaide
+0873,Adelaide
+0874,Adelaide
+0875,"Riverland, Murraylands"
+0876,Ceduna
+0877,South East
+0878,Mid North
+0879,"Northern Territory (Alice Springs, Darwin)"
+0880,Broken Hill
+0881,Adelaide
+0882,Adelaide
+0883,Adelaide
+0884,Adelaide
+0885,"Riverland, Murraylands"
+0886,Ceduna
+0887,South East
+0888,Mid North
+0889,"Northern Territory (Alice Springs, Darwin)"
+0890,Kalgoorlie
+0891,Derby
+0892,Perth
+0893,Perth
+0894,Perth
+0895,"Bullsbrook East, Northam, Pinjarra (Mandurah)"
+0896,Moora
+0897,"Bunbury, Busselton, Bridgetown, Collie"
+0898,Albany
+0899,Geraldton

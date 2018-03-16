@@ -1,15 +1,18 @@
 import pandas as pd
 from collections import defaultdict
+import os
 
 class PhoneNumberChecker:
     
     AUS_STATE_PREFIXES = {str(n) for n in range(1,9)}
 
-    NUMB_ALLOCS = pd.read_csv('/Users/ik/Data/phone-numbers/InquiryFullDownload.csv', 
+    # ACMA data is available at https://www.thenumberingsystem.com.au/download/InquiryFullDownload.zip
+
+    NUMB_ALLOCS = pd.read_csv(os.path.join(os.getcwd(), 'phonenumberchecker', 'data', 'data_acma_.csv'), 
                              dtype={'Prefix': int, 'From': int, 'To': int}, 
                    usecols=["Service Type", "Prefix", "From", "To", "Latest Holder"]).loc[lambda _: _['Service Type'].isin({'Digital mobile', 'Local rate', 'Freephone'})]
     """
-    create dictionaries of the sort {service_type1: {prefix1: [(from, to, holder), ..], prefix2: [(..), ..]},...
+    create dictionaries of the sort {service_type1: {prefix 1: [(from, to, holder), ..], prefix 2: [(..), ..]},...
     e.g. {'mob': {40: [(400000000, 400299999, 'TELSTRA CORPORATION LIMITED'),..],..}
     """
 
@@ -25,7 +28,7 @@ class PhoneNumberChecker:
                                                     .replace('limited', ' ').split())))
 
     LNDL_PREFIXES = {a[1:] if a.startswith('0') else a for a in 
-                     set(pd.read_csv('/Users/ik/Data/phone-numbers/landline_prefix_by_area.txt', dtype=str)['prefix'])}
+                     set(pd.read_csv(os.path.join(os.getcwd(), 'phonenumberchecker', 'data', 'data_prefixes_.txt'), dtype=str)['prefix'])}
     
     def __init__(self):
         pass
@@ -65,11 +68,11 @@ class PhoneNumberChecker:
     def verify(ph):  # 114 ms
         
         """
-        normalised number may be valid only if it's one of the following:
+        normalized number may be valid only if it's one of the following:
         
             a 9-digit mobile, e.g. 408621608
-            a 9-digit landline, e.g. 355983589
-            a 8-digit landline, e.g. 55983582
+            a 9-digit land line, e.g. 355983589
+            a 8-digit land line, e.g. 55983582
             a 6-digit 'local rate' number, e.g. 131028
             a 7-digit 'free' number, e.g. 1802099
             a 10-digit 'free' number
@@ -108,7 +111,6 @@ if __name__ == '__main__':
     print(f'initializing phone checker...', end='')
     pnc = PhoneNumberChecker()
     print('ok')
-
     print(pnc.verify('0061475001329'))
     print(pnc.verify('  934400221'))
     print(pnc.verify('1 33030'))
