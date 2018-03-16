@@ -8,7 +8,7 @@ class PhoneNumberChecker:
 
     # ACMA data is available at https://www.thenumberingsystem.com.au/download/InquiryFullDownload.zip
 
-    NUMB_ALLOCS = pd.read_csv(os.path.join(os.getcwd(), 'phonenumberchecker', 'data', 'data_acma_.csv'), 
+    NUMB_ALLOCS = pd.read_csv(os.path.join(os.getcwd(), 'phonenumberchecker', 'data', 'data_acma_.csv.gz'), 
                              dtype={'Prefix': int, 'From': int, 'To': int}, 
                    usecols=["Service Type", "Prefix", "From", "To", "Latest Holder"]).loc[lambda _: _['Service Type'].isin({'Digital mobile', 'Local rate', 'Freephone'})]
     """
