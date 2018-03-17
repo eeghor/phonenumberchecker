@@ -65,7 +65,7 @@ class PhoneNumberChecker:
 
 
     @staticmethod
-    def verify(ph):  # 114 ms
+    def verify(ph): 
         
         """
         normalized number may be valid only if it's one of the following:

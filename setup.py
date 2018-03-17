@@ -21,5 +21,5 @@ setup(name='phonenumberchecker',
       packages=['phonenumberchecker'],
       install_requires=['pandas'],
       python_requires='>=3.6',
-      package_data={'gender': ['data/*.csv']},
+      package_data={'phonenumberchecker': ['data/*']},
       keywords='phone number')
