@@ -5,7 +5,7 @@ def get_long_description():
     return open(os.path.join(os.path.dirname(__file__), "README.rst")).read()
 
 setup(name='phonenumberchecker',
-      version='0.0.2',
+      version='0.0.3',
       description='Check any Australian numbers',
       long_description=get_long_description(),
       classifiers=[

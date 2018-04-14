@@ -53,9 +53,12 @@ class PhoneNumberChecker:
 
         if not isinstance(ph, str):
             ph = str(ph)
-            
+
         # remove  and any non-numbers
-        ph = ''.join([c for c in ph if c.isdigit()])
+        ph = ''.join([c for c in ph if c.isdigit()]).strip()
+        # and if there are no digits at all or length is just too small
+        if len(ph) < 6:
+            return ph
         # remove leading 0
         while ph[0] == '0':
             ph = ph[1:]
