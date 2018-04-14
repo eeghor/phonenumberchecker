@@ -40,17 +40,20 @@ class PhoneNumberChecker:
         """
         pref = phone_number[:2] if phone_number[0] != '4' else phone_number[0]
 
-        for match_pref in set(PhoneNumberChecker.ALLOCS_DICT[PhoneNumberChecker.PREF2ABBR[pref]]):
-            if  str(match_pref).startswith(phone_number[:2]):
-                for number_range in PhoneNumberChecker.ALLOCS_DICT[PhoneNumberChecker.PREF2ABBR[pref]][match_pref]:
-                    if number_range[0] <= int(phone_number) <= number_range[1]:
-                        return (phone_number, number_range[2])
+        if pref in PhoneNumberChecker.PREF2ABBR:
+            for match_pref in set(PhoneNumberChecker.ALLOCS_DICT[PhoneNumberChecker.PREF2ABBR[pref]]):
+                if  str(match_pref).startswith(phone_number[:2]):
+                    for number_range in PhoneNumberChecker.ALLOCS_DICT[PhoneNumberChecker.PREF2ABBR[pref]][match_pref]:
+                        if number_range[0] <= int(phone_number) <= number_range[1]:
+                            return (phone_number, number_range[2])
         return (phone_number, 'invalid')
 
     @staticmethod
     def normalise(ph):
 
-        assert isinstance(ph, str), 'phone number must be a string!'
+        if not isinstance(ph, str):
+            ph = str(ph)
+            
         # remove  and any non-numbers
         ph = ''.join([c for c in ph if c.isdigit()])
         # remove leading 0
